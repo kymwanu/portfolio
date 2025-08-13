@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Meu Portfólio</title>
+  <base href="/">
+  <meta name="description" content="Portfólio em Flutter Web">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Flutter Web generated CSS -->
+  <link rel="stylesheet" href="styles.css">
+
+  <script>
+    // Redirecionamento para garantir que o base href funcione em rotas
+    const baseHref = document.querySelector('base').href;
+    if (!location.href.startsWith(baseHref)) {
+      history.replaceState({}, '', baseHref);
+    }
+  </script>
+</head>
+
+<body>
+  <script src="flutter.js" defer></script>
+  <script>
+    window.addEventListener('load', function () {
+      _flutter.loader.loadEntrypoint({
+        serviceWorker: {
+          // Service Worker removido para evitar erro no Vercel
+          serviceWorkerVersion: null
+        },
+        onEntrypointLoaded: function (engineInitializer) {
+          engineInitializer.initializeEngine().then(function (appRunner) {
+            appRunner.runApp();
+          });
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
