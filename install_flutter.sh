@@ -2,8 +2,9 @@
 
 # Instalar Flutter
 echo "🔹 Baixando Flutter SDK..."
-git clone https://github.com/flutter/flutter.git
+git clone -b stable https://github.com/flutter/flutter.git --depth 1
 export PATH="$PATH:$(pwd)/flutter/bin"
+
 
 # Confirmar versão
 flutter --version
