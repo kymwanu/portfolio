@@ -499,7 +499,7 @@ class _ExperiencesGrid extends StatelessWidget {
                         ],
                       ),
                     );
-                  }).toList(),
+                  }),
 
                   const Spacer(),
                 ],
