@@ -65,7 +65,6 @@ class _HomePageState extends State<HomePage> {
   final _aboutKey = GlobalKey();
   final _projectsKey = GlobalKey();
   final _experiencesKey = GlobalKey();
-  final _contactKey = GlobalKey();
 
   Future<void> _scrollTo(GlobalKey key) async {
     final context = key.currentContext;
@@ -99,7 +98,10 @@ class _HomePageState extends State<HomePage> {
         actions: [
           _NavButton(text: 'Sobre', onTap: () => _scrollTo(_aboutKey)),
           _NavButton(text: 'Projetos', onTap: () => _scrollTo(_projectsKey)),
-          _NavButton(text: 'Experiências', onTap: () => _scrollTo(_contactKey)),
+          _NavButton(
+            text: 'Experiências',
+            onTap: () => _scrollTo(_experiencesKey),
+          ),
 
           const SizedBox(width: 8),
         ],
@@ -339,13 +341,11 @@ class _ProjectsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final projects = [
+    final List<Map<String, String>> projects = [
       {
         'title': '\nangola province picker',
-
         'description':
-            '\nUm pacote publicado no pub.dev com mais e 200 downloads. Seletor de províncias de Angola simples, leve e personalizável para aplicativos Flutter. \n'
-            'Ideal para formulários, cadastros e endereços.',
+            '\nUm pacote publicado no pub.dev com mais e 200 downloads. Seletor de províncias de Angola simples, leve e personalizável para aplicativos Flutter.\nIdeal para formulários, cadastros e endereços.',
         'url': 'https://github.com/kymwanu/angola_province_picker',
       },
       {
@@ -357,7 +357,7 @@ class _ProjectsGrid extends StatelessWidget {
       {
         'title': '\nlive-tracking',
         'description':
-            '\nÉ um recurso usado para acompanhar a localização, o status ou o progresso de algo de qualquer meio ou item de forma instantânea e contínua',
+            '\nÉ um recurso usado para acompanhar a localização, o status ou o progresso de algo de qualquer meio ou item de forma instantânea e contínua.',
         'url': 'https://github.com/kymwanu/live-tracking',
       },
     ];
@@ -382,16 +382,21 @@ class _ProjectsGrid extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  project['title']!,
+                  project['title'] ?? '',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 8),
-                Text(project['description']!),
-                const Spacer(),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Text(project['description'] ?? ''),
+                  ),
+                ),
+                const SizedBox(height: 8),
                 TextButton(
                   onPressed: () async {
-                    if (await canLaunchUrl(Uri.parse(project['url']!))) {
-                      await launchUrl(Uri.parse(project['url']!));
+                    final url = project['url'];
+                    if (url != null && await canLaunchUrl(Uri.parse(url))) {
+                      await launchUrl(Uri.parse(url));
                     }
                   },
                   child: const Text('Ver no GitHub'),
@@ -416,7 +421,7 @@ class _ExperiencesGrid extends StatelessWidget {
         'title': 'Desenvolvedor Flutter – K SOLID',
         'activities': [
           'Desenvolvi um sistema de reações e animações com sincronização em tempo real afim de aumentar o engajamento',
-          'Implementei notificações push usando FCM , desenvolvi um sistema de notificações segmentadas por tópicos e otimizei a entrega de notificações em segundo plano.',
+          'Implementei notificações push usando FCM, desenvolvi um sistema de notificações segmentadas por tópicos e otimizei a entrega de notificações em segundo plano.',
           'Implementei o login com o Google usando o Firebase Auth.',
           'Integração com APIs REST e colaboração com equipes de design e QA.',
         ],
@@ -426,7 +431,7 @@ class _ExperiencesGrid extends StatelessWidget {
         'activities': [
           'Desenvolvi telas com Vue.js 3 (Composition API), demonstrando reatividade, componentização e persistência via localStorage',
           'Melhorar o desempenho do aplicativo, corrigir erros e garantir a qualidade do código com testes, usando o pacote test',
-          'Integração com REST API (http/dio) , conectar o aplicativo a serviços do backend.',
+          'Integração com REST API (http/dio), conectar o aplicativo a serviços do backend.',
           'Implementei filtros (todas/ativas/concluídas) e dark mode, destacando habilidades em UX e state management.',
         ],
       },
@@ -444,6 +449,8 @@ class _ExperiencesGrid extends StatelessWidget {
       itemCount: experiences.length,
       itemBuilder: (context, index) {
         final exp = experiences[index];
+        final title = exp['title'] as String;
+        final activities = exp['activities'] as List<String>;
 
         return TweenAnimationBuilder(
           tween: Tween<double>(begin: 0, end: 1),
@@ -452,7 +459,7 @@ class _ExperiencesGrid extends StatelessWidget {
             return Opacity(
               opacity: value,
               child: Transform.translate(
-                offset: Offset(0, (1 - value) * 20), // Slide para cima
+                offset: Offset(0, (1 - value) * 20),
                 child: child,
               ),
             );
@@ -467,41 +474,43 @@ class _ExperiencesGrid extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Título da experiência
-                  SizedBox(height: 10),
                   Text(
-                    exp['title'] as String,
+                    title,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 40),
-
-                  // Lista de atividades
-                  ...(exp['activities'] as List<String>).map((activity) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Icon(
-                            Icons.check_circle,
-                            color: Colors.green,
-                            size: 18,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              activity,
-                              style: Theme.of(context).textTheme.bodyMedium,
+                  const SizedBox(height: 20),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: activities.map((activity) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Icon(
+                                  Icons.check_circle,
+                                  color: Colors.green,
+                                  size: 18,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    activity,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodyMedium,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
+                          );
+                        }).toList(),
                       ),
-                    );
-                  }),
-
-                  const Spacer(),
+                    ),
+                  ),
                 ],
               ),
             ),
